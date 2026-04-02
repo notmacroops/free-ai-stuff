@@ -1,37 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>AI Media Generator</title>
+    <meta charset="UTF-8">
+    <title>Free AI Studio</title>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #121212; color: white; }
-        input { padding: 10px; width: 300px; border-radius: 5px; border: none; }
-        button { padding: 10px 20px; cursor: pointer; background: #6200ee; color: white; border: none; border-radius: 5px; }
-        #output-container { margin-top: 20px; }
-        img, video { max-width: 90%; border: 2px solid #333; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .container { background: #1e293b; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 400px; text-align: center; }
+        input { width: 90%; padding: 12px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; margin-bottom: 1rem; }
+        button { width: 100%; padding: 12px; border-radius: 8px; border: none; background: #3b82f6; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #2563eb; }
+        #result-container { margin-top: 1.5rem; min-height: 200px; display: flex; align-items: center; justify-content: center; border: 2px dashed #334155; border-radius: 8px; }
+        img { max-width: 100%; border-radius: 8px; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3b82f6; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <h1>AI Generator</h1>
-    <p>Enter a prompt to create an image or video</p>
+    <div class="container">
+        <h2>AI Image Generator</h2>
+        <input type="text" id="promptInput" placeholder="A futuristic city in the clouds...">
+        <button id="genBtn">Generate Image</button>
 
-    <input type="text" id="userPrompt" placeholder="A neon cat in space...">
-    <button onclick="generate('image')">Generate Image</button>
-    <button onclick="generate('video')">Generate Video</button>
-
-    <div id="output-container">
-        <p id="status"></p>
+        <div id="result-container">
+            <p id="placeholderText">Your masterpiece will appear here</p>
+        </div>
     </div>
 
-    <script>
-        async function generate(type) {
-            const prompt = document.getElementById('userPrompt').value;
-            const status = document.getElementById('status');
-            status.innerText = "Generating... please wait.";
-
-            // This is where your JavaScript would fetch from the API
-            // and then inject an <img> or <video> tag into the output-container
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
