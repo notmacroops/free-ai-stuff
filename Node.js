@@ -1,33 +1,34 @@
-import express from "express";
-import Replicate from "replicate";
-import cors from "cors";
+const genBtn = document.getElementById('genBtn');
+const promptInput = document.getElementById('promptInput');
+const resultContainer = document.getElementById('result-container');
 
-const app = express();
-app.use(cors()); // Allows your HTML file to talk to this server
-app.use(express.json());
+genBtn.addEventListener('click', async () => {
+    const prompt = promptInput.value;
+    if (!prompt) return alert("Please enter a prompt!");
 
-const replicate = new Replicate({
-  auth: "YOUR_REPLICATE_API_TOKEN", // Get this from your Replicate dashboard
-});
-
-app.post("/generate-image", async (req, res) => {
-  try {
-    const input = {
-        // We get the prompt from the user's input on the website
-        prompt: req.body.prompt 
-    };
-
-    // This is the exact line from your snippet
-    const output = await replicate.run("black-forest-labs/flux-schnell", { input });
-
-    // Instead of saving to disk, we send the URL back to the website
-    // Replicate returns an array of files; we grab the URL of the first one
-    res.json({ url: output[0].url() }); 
+    resultContainer.innerHTML = '<div class="loader">Loading...</div>';
     
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Generation failed" });
-  }
-});
+    try {
+        const response = await fetch(
+            "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
+            {
+                headers: { 
+                    // ↓↓↓ PUT YOUR TOKEN HERE ↓↓↓
+                    Authorization: "Bearer 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", 
+                    "Content-Type": "application/json" 
+                },
+                method: "POST",
+                body: JSON.stringify({ inputs: prompt }),
+            }
+        );
 
-app.listen(3000, () => console.log("Server running on http://localhost:3000"));
+        if (!response.ok) throw new Error("API Error: Check your token or limit");
+
+        const blob = await response.blob();
+        const imgUrl = URL.createObjectURL(blob);
+        
+        resultContainer.innerHTML = `<img src="${imgUrl}" alt="AI Generated Image">`;
+    } catch (error) {
+        resultContainer.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+    }
+});
