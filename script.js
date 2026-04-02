@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const response = await fetch(url, {
                 headers: { 
-                    "Authorization": "Bearer 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", 
+                    "Authorization": "Bearer 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", 
                     "Content-Type": "application/json" 
                 },
                 method: "POST",
