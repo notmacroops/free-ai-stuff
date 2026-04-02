@@ -1,45 +1,45 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const genBtn = document.getElementById('genBtn');
-    const promptInput = document.getElementById('promptInput');
-    const resultContainer = document.getElementById('result-container');
+// No need for DOMContentLoaded when using type="module"
+const genBtn = document.getElementById('genBtn');
+const promptInput = document.getElementById('promptInput');
+const resultDiv = document.getElementById('result');
 
-    genBtn.addEventListener('click', async () => {
-        const prompt = promptInput.value;
-        if (!prompt) return alert("Please enter a prompt!");
+genBtn.addEventListener('click', async () => {
+    const prompt = promptInput.value;
+    if (!prompt) return alert("Enter a prompt!");
 
-        resultContainer.innerHTML = '<div class="loader">🎨 Requesting from New Router...</div>';
+    resultDiv.innerHTML = '<p class="loading">🎨 Connecting to HF Router...</p>';
+
+    try {
+        // Updated 2026 Hugging Face Router URL
+        const API_URL = "https://router.huggingface.co/hf-inference/v1/images/generations";
         
-        try {
-            // NEW 2026 ENDPOINT URL
-            const url = "https://router.huggingface.co/hf-inference/v1/images/generations";
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer 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", // Replace with your fresh token
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                model: "black-forest-labs/FLUX.1-schnell",
+                prompt: prompt,
+                n: 1,
+                size: "1024x1024"
+            })
+        });
 
-            const response = await fetch(url, {
-                headers: { 
-                    "Authorization": "Bearer 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", 
-                    "Content-Type": "application/json" 
-                },
-                method: "POST",
-                body: JSON.stringify({ 
-                    model: "black-forest-labs/FLUX.1-schnell", // Model moved inside the body
-                    prompt: prompt,
-                    n: 1,
-                    size: "1024x1024"
-                }),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || "Generation failed");
-            }
-
-            const data = await response.json();
-            // The new API returns an OpenAI-style JSON with a URL
-            const imgUrl = data.data[0].url; 
-            
-            resultContainer.innerHTML = `<img src="${imgUrl}" alt="AI Generated Image">`;
-        } catch (error) {
-            resultContainer.innerHTML = `<p style="color: #ff4d4d;">❌ ${error.message}</p>`;
-            console.error("Full Error:", error);
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`API Error: ${response.status} - ${errorText}`);
         }
-    });
+
+        const data = await response.json();
+        
+        // The Router API returns a JSON object with a URL
+        const imageUrl = data.data[0].url;
+        resultDiv.innerHTML = `<img src="${imageUrl}" alt="AI Result">`;
+
+    } catch (err) {
+        resultDiv.innerHTML = `<p style="color:red">❌ ${err.message}</p>`;
+        console.error(err);
+    }
 });
